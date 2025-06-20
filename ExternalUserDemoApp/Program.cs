@@ -42,6 +42,7 @@ while (true)
     Console.WriteLine("\nOptions:");
     Console.WriteLine("1. Get user by ID");
     Console.WriteLine("2. Get all users from page");
+    Console.WriteLine("3. Get all users across all pages");
     Console.WriteLine("0. Exit");
     Console.Write("Enter your choice: ");
     var choice = Console.ReadLine();
@@ -88,6 +89,21 @@ while (true)
             }
         }
     }
+    else if (choice == "3")
+    {
+        try
+        {
+            var allUsers = await userService.GetAllUsersAsync();
+            foreach (var u in allUsers)
+            {
+                Console.WriteLine($"{u.Id} - {u.First_Name} {u.Last_Name}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching all users: {ex.Message}");
+        }
+    }
     else if (choice == "0")
     {
         break;
@@ -98,7 +114,6 @@ while (true)
     }
 }
 
-// Retry policy with exponential backoff
 static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
 {
     return HttpPolicyExtensions

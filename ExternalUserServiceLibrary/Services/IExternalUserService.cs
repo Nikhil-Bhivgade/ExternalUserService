@@ -11,5 +11,6 @@ namespace ExternalUserServiceLibrary.Services
     {
         Task<User> GetUserByIdAsync(int userId);
         Task<IEnumerable<User>> GetAllUsersAsync(int pageId);
+        Task<IEnumerable<User>> GetAllUsersAsync();
     }
 }

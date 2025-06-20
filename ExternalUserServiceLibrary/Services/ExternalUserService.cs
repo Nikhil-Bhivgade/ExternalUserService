@@ -61,5 +61,34 @@ namespace ExternalUserServiceLibrary.Services
             return Enumerable.Empty<User>();
         }
 
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            const string cacheKey = "users_all_pages";
+
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<User> cachedAllUsers))
+                return cachedAllUsers;
+
+            var allUsers = new List<User>();
+            int currentPage = 1;
+            UserResponse response;
+
+            do
+            {
+                response = await _reqResClient.GetAllUsersAsync(currentPage);
+                if (response?.Data != null)
+                    allUsers.AddRange(response.Data);
+                currentPage++;
+            }
+            while (response != null && currentPage <= response.Total_Pages);
+
+            if (allUsers != null)
+            {
+                _cache.Set(cacheKey, allUsers , TimeSpan.FromSeconds(_cacheDurationSeconds));
+                return response.Data;
+            }
+
+            return allUsers;
+        }
+
     }
 }
